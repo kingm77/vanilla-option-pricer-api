@@ -75,12 +75,7 @@ const typeDefs = gql`
 
   type Query {
     getInstrumentById(id: ID!): InstrumentResult!
-    getThreadsByCategoryId(categoryId: ID!): ThreadArrayResult!
-    getThreadsLatest: ThreadArrayResult!
-    getThreadItemByThreadId(threadId: ID!): ThreadItemArrayResult!
-    getAllCategories: [ThreadCategory!]
     me: UserResult!
-    getTopCategoryThread: [CategoryThread!]
   }
 
   type Mutation {
