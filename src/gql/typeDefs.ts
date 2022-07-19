@@ -34,7 +34,7 @@ const typeDefs = gql`
     id: ID!
     strike: Float!
     maturity: Date!
-    type: string!
+    type: String!
     trades: [Trade!]
     user: User!
     instrument: Instrument!
@@ -75,6 +75,8 @@ const typeDefs = gql`
 
   type Query {
     getInstrumentById(id: ID!): InstrumentResult!
+    getInstrumentByName(name: String!): InstrumentResult!
+    getInstruments: InstrumentArrayResult!
     me: UserResult!
   }
 
