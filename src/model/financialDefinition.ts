@@ -1,4 +1,4 @@
-import {Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany} from "typeorm";
+import {Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, BaseEntity} from "typeorm";
 import { Instrument } from "./instrument";
 import { Trade } from "./trade";
 import { User } from "./user";
@@ -9,8 +9,8 @@ export enum OptionType {
     PUT = "put"
 }
 
-@Entity({name: "financialsdefinitions"})
-export class FinancialDefinition{
+@Entity({ name: "financialsdefinitions" })
+export class FinancialDefinition extends BaseEntity {
     @PrimaryGeneratedColumn({name: "Id", type: "bigint"})
     id: string;
 

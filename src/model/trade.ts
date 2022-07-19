@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, BaseEntity } from "typeorm";
 import { FinancialDefinition } from "./financialDefinition";
 import { MarketData } from "./marketData";
 import { User } from "./user";
@@ -6,7 +6,7 @@ import { User } from "./user";
 
 
 @Entity({ name: "trades" })
-export class Trade {
+export class Trade extends BaseEntity{
     @PrimaryGeneratedColumn({ name: "Id", type: "bigint" })
     id: string;
 

@@ -16,6 +16,14 @@ export class Instrument extends BaseEntity{
     })
     name: string;
 
+    @Column("varchar", {
+        name: "Owner",
+        length: 30,
+        unique: false,
+        nullable: true,
+    })
+    owner: string;
+
     @OneToMany(() => FinancialDefinition, (financialDef) => financialDef.instrument)
     FinancialsDefs: FinancialDefinition[];
 }

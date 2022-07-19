@@ -91,6 +91,84 @@ export const logout = async (email: string): Promise<string> => {
   return "User logged off.";
 };
 
+export const changePassword = async (id: string, newPassword: string): Promise<string> => {
+    const result = isPasswordValid(newPassword);
+    if (!result.isValid) {
+        return "Passwords must have min length 8, 1 upper character, 1 number, and 1 symbol"
+    }
+
+    const user = await User.findOne({
+        where: { id },
+    });
+
+    if (!user) {
+        return "User not found.";
+    }
+
+    if (!user.confirmed) {
+        return "User has not confirmed their registration email yet.";
+    }
+
+    const salt = await bcrypt.genSalt(saltRounds);
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+    user.password = hashedPassword;
+    user.save();
+
+    return "Password changed succesfully"
+}
+
+export const edit = async (id: string, newFirstname: string, newLastname: string): Promise<string> => {
+    const user = await User.findOne({
+        where: { id },
+    });
+
+    if (!user) {
+        return "User not found.";
+    }
+
+    if (!user.confirmed) {
+        return "User has not confirmed their registration email yet.";
+    }
+
+    if (newFirstname != "" && user?.firstname != newFirstname)
+        user.firstname = newFirstname;
+
+    if (newLastname != "" && user.lastname != newLastname)
+        user.lastname = newLastname;
+
+    user.save();
+    return "user edited succesfully";
+}
+
+export const me = async (id: string): Promise<UserResult> => {
+    const user = await User.findOne({
+        where: { id },
+        relations: [
+            "financialsDefs",
+            "financialsDefs.trades",
+            "marketsData",
+            "marketsData.trades",
+        ],
+    });
+
+    if (!user) {
+        return {
+            messages: ["User not found."],
+        };
+    }
+
+    if (!user.confirmed) {
+        return {
+            messages: ["User has not confirmed their registration email yet."],
+        };
+    }
+
+    user.password = "";
+    return {
+        user: user,
+    };
+};
+
 function userNotFound(email: string) {
   return `User with email ${email} not found.`;
 }

@@ -1,11 +1,11 @@
-import { getInstrumentById, getInstrumentByName, getInstruments } from "../controller/instrumentRepo";
+import { getInstrumentById, getInstrumentByName, getInstruments } from "../controller/instrument.controller";
 import { QueryArrayResult, QueryOneResult } from "../controller/queryArrayResult";
 import { GqlContext } from "../gql/GqlContext";
 import { Instrument } from "../model/instrument";
-import { EntityResult, STANDARD_ERROR } from "./commonValue";
+import { EntityResult, STANDARD_ERROR } from "../common/commonValue";
 
 
-export const gqlGetInstrumentById = async (
+export const queryGetInstrumentById = async (
     obj: any,
     args: { id: string },
     ctx: GqlContext,
@@ -27,7 +27,7 @@ export const gqlGetInstrumentById = async (
     }
 }
 
-export const gqlGetInstrumentByName = async (
+export const queryGetInstrumentByName = async (
     obj: any,
     args: { name: string },
     ctx: GqlContext,
@@ -49,7 +49,7 @@ export const gqlGetInstrumentByName = async (
     }
 }
 
-export const gqlGetInstruments = async (
+export const queryGetInstruments = async (
     obj: any,
     args:null,
     ctx: GqlContext,
@@ -60,7 +60,6 @@ export const gqlGetInstruments = async (
         instruments = await getInstruments();
 
         if (instruments.entities) {
-            console.log("houha", instruments.entities)
             return {instruments: instruments.entities};
         }
         return {

@@ -2,8 +2,13 @@
   "ExpandedNodes": [
     "",
     "\\src",
-    "\\src\\gql"
+    "\\src\\common",
+    "\\src\\controller",
+    "\\src\\gql",
+    "\\src\\model",
+    "\\src\\mutation",
+    "\\src\\query"
   ],
-  "SelectedNode": "\\package.json",
+  "SelectedNode": "\\src\\controller\\financialDefinition.controller.ts",
   "PreviewInSolutionExplorer": false
 }

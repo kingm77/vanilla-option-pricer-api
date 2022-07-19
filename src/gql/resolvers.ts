@@ -1,5 +1,9 @@
 import { IResolvers } from "apollo-server-express";
-import { gqlGetInstrumentById, gqlGetInstrumentByName, gqlGetInstruments } from "../gqlFunction/instrument.gql";
+import { createfinDefMutation } from "../mutation/financialDefinition.mutation";
+import { createMarketDataMutation } from "../mutation/marketData.mutation";
+import { changePasswordMutation, editMutation, loginMutation, logoutMutation, registerMutation } from "../mutation/user.mutation";
+import { queryGetInstrumentById, queryGetInstrumentByName, queryGetInstruments } from "../query/instrument.query";
+import { meMutation } from "../query/user.query";
 import { GqlContext } from "./GqlContext";
 
 
@@ -77,9 +81,19 @@ const resolvers: IResolvers = {
         }
     },
     Query: {
-        getInstrumentById: gqlGetInstrumentById,
-        getInstrumentByName:gqlGetInstrumentByName,
-        getInstruments: gqlGetInstruments
+        getInstrumentById: queryGetInstrumentById,
+        getInstrumentByName:queryGetInstrumentByName,
+        getInstruments: queryGetInstruments,
+        me: meMutation
+    },
+    Mutation: {
+        register: registerMutation,
+        login: loginMutation,
+        logout: logoutMutation,
+        changePassword: changePasswordMutation,
+        edit: editMutation,
+        createFinancialDefinition: createfinDefMutation,
+        createMarketData: createMarketDataMutation
     }
 }
 

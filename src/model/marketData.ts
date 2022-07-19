@@ -1,10 +1,10 @@
-import {Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany} from "typeorm";
+import {Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, BaseEntity} from "typeorm";
 import { Trade } from "./trade";
 import { User } from "./user";
 //import {Length} from "class-validator"
 
-@Entity({name: "marketdata"})
-export class MarketData{
+@Entity({ name: "marketdata" })
+export class MarketData extends BaseEntity {
     @PrimaryGeneratedColumn({name: "Id", type: "bigint"})
     id: string;
 

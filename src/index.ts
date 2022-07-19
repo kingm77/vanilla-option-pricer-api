@@ -27,8 +27,8 @@ const main = async () => {
   const redis = new Redis({
     port: Number(process.env.REDIS_PORT),
     host: process.env.REDIS_HOST,
-    password: process.env.REDIS_PASSWORD,
   });
+
   const RedisStore = connectRedis(session);
   const redisStore = new RedisStore({
     client: redis,
