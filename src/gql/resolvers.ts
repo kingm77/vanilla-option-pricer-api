@@ -1,10 +1,12 @@
 import { IResolvers } from "apollo-server-express";
+import { getPriceQuery } from "../query/pricing.query";
 import { createfinDefMutation } from "../mutation/financialDefinition.mutation";
 import { createMarketDataMutation } from "../mutation/marketData.mutation";
 import { changePasswordMutation, editMutation, loginMutation, logoutMutation, registerMutation } from "../mutation/user.mutation";
 import { queryGetInstrumentById, queryGetInstrumentByName, queryGetInstruments } from "../query/instrument.query";
 import { meMutation } from "../query/user.query";
 import { GqlContext } from "./GqlContext";
+import { bookTradeMutation } from "../mutation/trade.mutation";
 
 
 const resolvers: IResolvers = {
@@ -80,11 +82,20 @@ const resolvers: IResolvers = {
             return "TradeArrayResult";
         }
     },
+    PriceResult: {
+        __resolveType(obj: any, context: GqlContext, info: any) {
+            if (obj.messages) {
+                return "EntityResult";
+            }
+            return "PriceResult";
+        }
+    },
     Query: {
         getInstrumentById: queryGetInstrumentById,
         getInstrumentByName:queryGetInstrumentByName,
         getInstruments: queryGetInstruments,
-        me: meMutation
+        me: meMutation,
+        getTradePrice: getPriceQuery
     },
     Mutation: {
         register: registerMutation,
@@ -93,7 +104,8 @@ const resolvers: IResolvers = {
         changePassword: changePasswordMutation,
         edit: editMutation,
         createFinancialDefinition: createfinDefMutation,
-        createMarketData: createMarketDataMutation
+        createMarketData: createMarketDataMutation,
+        bookTrade: bookTradeMutation
     }
 }
 

@@ -16,6 +16,7 @@ const typeDefs = gql`
     confirmed: Boolean!
     financialsDefs: [FinancialDefinition!]
     marketsData: [MarketData!]
+    trades: [Trade!]
   }
   union UserResult = User | EntityResult
 
@@ -64,7 +65,7 @@ const typeDefs = gql`
     id: ID!
     quantity: Int!
     price: Float!
-    date: Date!
+    date: String!
     user: User!
     financialDef: FinancialDefinition!
     marketData: MarketData!
@@ -75,21 +76,30 @@ const typeDefs = gql`
   }
   union TradeArrayResult = TradeArray | EntityResult
 
+  type Price {
+    value: Float!
+  }
+  union PriceResult = EntityResult | Price
+
   type Query {
     getInstrumentById(id: ID!): InstrumentResult!
     getInstrumentByName(name: String!): InstrumentResult!
     getInstruments: InstrumentArrayResult!
     me: UserResult!
+    getTradePrice(finDefId: ID!, marketDataId: ID!, quantity: Int!): EntityResult!
+    getTradeByCode(code: String!): TradeResult!
+    getTrades: TradeArrayResult!
   }
 
   type Mutation {
-    createFinancialDefinition(instrumentName: String!, strike: Float!, maturity: String!, type: String!): EntityResult
-    createMarketData(volatility: Float!, spot: Float!, interestRate: Float!): EntityResult
+    createFinancialDefinition(instrumentName: String!, strike: Float!, maturity: String!, type: String!): EntityResult!
+    createMarketData(volatility: Float!, spot: Float!, interestRate: Float!): EntityResult!
     register(email: String!, firstname: String!, lastname: String!, password: String!): String!
     login(email: String!, password: String!): String!
     logout(email: String!): String!
     changePassword(newPassword: String!): String!
     edit(newFirstname: String!, newLastname: String!): String!
+    bookTrade(finDefId: ID!, marketDataId: ID!, quantity: Int!, price: Float!): EntityResult!
   }
 `;
 

@@ -145,9 +145,8 @@ export const me = async (id: string): Promise<UserResult> => {
         where: { id },
         relations: [
             "financialsDefs",
-            "financialsDefs.trades",
             "marketsData",
-            "marketsData.trades",
+            'trades'
         ],
     });
 

@@ -5,10 +5,11 @@
     "\\src\\common",
     "\\src\\controller",
     "\\src\\gql",
+    "\\src\\microservicesRequest",
     "\\src\\model",
     "\\src\\mutation",
     "\\src\\query"
   ],
-  "SelectedNode": "\\src\\controller\\financialDefinition.controller.ts",
+  "SelectedNode": "\\src\\model\\financialDefinition.ts",
   "PreviewInSolutionExplorer": false
 }
