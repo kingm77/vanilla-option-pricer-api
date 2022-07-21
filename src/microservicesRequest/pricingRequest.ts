@@ -3,7 +3,9 @@ import { dateDifference } from "../common/dateDifference";
 import { QueryOneResult } from "../controller/queryArrayResult";
 import { FinancialDefinition } from "../model/financialDefinition";
 import { MarketData } from "../model/marketData";
+import dotenv from "dotenv";
 
+dotenv.config();
 
 export class Price {
     value: number
@@ -18,7 +20,7 @@ export const getPrice =
         findef: FinancialDefinition,
         marketdata: MarketData,
         quantity: number): Promise<QueryOneResult<number>> => {
-        const url = "http://localhost:34566/pricer/black-scholes/" + buildQueryString(findef, marketdata);
+        const url = process.env.PRICING_SERVICE_URL + buildQueryString(findef, marketdata);
         console.log(url);
         try {
             const res = await fetch(url);
