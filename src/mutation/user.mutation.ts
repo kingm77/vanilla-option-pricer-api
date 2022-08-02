@@ -1,22 +1,29 @@
 import { register, login, logout, changePassword, UserResult, edit } from "../controller/user.controller";
 import { GqlContext } from "../gql/GqlContext";
-import { STANDARD_ERROR } from "../common/commonValue";
+import { EntityResult, REGISTRATION_SUCCESSFUL, STANDARD_ERROR, USER_NOT_LOGIN } from "../common/commonValue";
+
 
 export const registerMutation = async (
     obj: any,
     args: { email: string; firstname: string; lastname: string; password: string },
     ctx: GqlContext,
     info: any
-): Promise<string> => {
+): Promise<EntityResult> => {
     let user: UserResult;
     try {
         user = await register(args.email, args.firstname, args.lastname, args.password);
-        if (user && user.user) {
-            return "Registration successful.";
-        }
-        return user && user.messages ? user.messages[0] : STANDARD_ERROR;
+        if (user && user.user) 
+            return REGISTRATION_SUCCESSFUL;
+        
+        return {
+            success: false,
+            messages: [user && user.messages ? user.messages[0] : STANDARD_ERROR]
+        };
     } catch (ex) {
-        throw ex;
+        return {
+            success: false,
+            messages: [STANDARD_ERROR]
+        }
     }
 }
 
@@ -25,19 +32,28 @@ export const loginMutation = async (
     args: { email: string; password: string },
     ctx: GqlContext,
     info: any
-): Promise<string> => {
+): Promise<EntityResult> => {
     let user: UserResult;
     try {
         user = await login(args.email, args.password);
         if (user && user.user) {
             ctx.req.session!.userId = user.user.id;
 
-            return `Login successful for userId ${ctx.req.session!.userId}.`;
+            return {
+                success: true,
+                messages: [`Login successful for userId ${ctx.req.session!.userId}.`]
+            };
         }
-        return user && user.messages ? user.messages[0] : STANDARD_ERROR;
+
+        return {
+            success: false,
+            messages: [user && user.messages ? user.messages[0] : STANDARD_ERROR]
+        };
     } catch (ex: any) {
-        console.log(ex.message);
-        throw ex;
+        return {
+            success: false,
+            messages: [STANDARD_ERROR]
+        }
     }
 }
 
@@ -46,7 +62,7 @@ export const logoutMutation = async (
     args: { email: string },
     ctx: GqlContext,
     info: any
-): Promise<string> => {
+): Promise<EntityResult> => {
     try {
         let result = await logout(args.email);
         ctx.req.session?.destroy((err: any) => {
@@ -58,7 +74,10 @@ export const logoutMutation = async (
         });
         return result;
     } catch (ex) {
-        throw ex;
+        return {
+            success: false,
+            messages: [STANDARD_ERROR]
+        }
     }
 }
 
@@ -67,11 +86,10 @@ export const changePasswordMutation = async (
     args: { newPassword: string },
     ctx: GqlContext,
     info: any
-): Promise<string> => {
+): Promise<EntityResult> => {
     try {
-        if (!ctx.req.session || !ctx.req.session!.userId) {
-            return "You must be logged in before you can change your password.";
-        }
+        if (!ctx.req.session || !ctx.req.session!.userId) return USER_NOT_LOGIN;
+
         let result = await changePassword(
             ctx.req.session!.userId,
             args.newPassword
@@ -79,7 +97,10 @@ export const changePasswordMutation = async (
 
         return result;
     } catch (ex) {
-        throw ex;
+        return {
+            success: false,
+            messages: [STANDARD_ERROR]
+        }
     }
 }
 
@@ -88,11 +109,10 @@ export const editMutation = async (
     args: { newFirstname: string, newLastname: string },
     ctx: GqlContext,
     info: any
-): Promise<string> => {
+): Promise<EntityResult> => {
     try {
-        if (!ctx.req.session || !ctx.req.session!.userId) {
-            return "You must be logged in before you can edit your profile.";
-        }
+        if (!ctx.req.session || !ctx.req.session!.userId) return USER_NOT_LOGIN;
+
         let result = await edit(
             ctx.req.session!.userId,
             args.newFirstname,
@@ -101,6 +121,9 @@ export const editMutation = async (
 
         return result;
     } catch (ex) {
-        throw ex;
+        return {
+            success: false,
+            messages: [STANDARD_ERROR]
+        }
     }
 }

@@ -10,7 +10,6 @@ import  resolvers from "./gql/resolvers";
 import cors from "cors";
 import dotenv from "dotenv";
 
-console.log(process.env.NODE_ENV);
 dotenv.config();
 
 const main = async () => {

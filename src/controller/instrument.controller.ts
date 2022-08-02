@@ -1,15 +1,12 @@
 import { QueryArrayResult, QueryOneResult } from "./queryArrayResult";
 import { Instrument } from "../model/instrument";
+import { INSTRUMENT_NOT_FOUND } from "../common/commonValue";
 
 export const getInstrumentById = async (
     id: string
 ): Promise<QueryOneResult<Instrument>> => {
     const instrument = await Instrument.findOne({ id });
-    if (!instrument) {
-        return {
-        messages: ["Instrument not found."]
-        };
-    }
+    if (!instrument) return INSTRUMENT_NOT_FOUND;
 
     return {
         entity: instrument
@@ -21,11 +18,7 @@ export const getInstrumentByName = async (
 ): Promise<QueryOneResult<Instrument>> => {
     const instrument = await Instrument.findOne({where:{name}});
     console.log(instrument)
-    if (!instrument) {
-        return {
-        messages: ["Instrument not found."]
-        };
-    }
+    if (!instrument) return INSTRUMENT_NOT_FOUND;
 
     return {
         entity: instrument
@@ -34,12 +27,11 @@ export const getInstrumentByName = async (
 
 export const getInstruments = async (): Promise<QueryArrayResult<Instrument>> => {
     const instruments = await Instrument.find()
-    if (!instruments) {
-        return {
-        messages: ["No Instrument was found."]
+    if (!instruments) return {
+            success: false,
+            messages: ["No Instrument was found."]
         };
-    }
-
+    
     return {
         entities: instruments
     };

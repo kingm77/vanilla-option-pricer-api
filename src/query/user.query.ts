@@ -14,6 +14,7 @@ export const meMutation = async (
     try {
         if (!ctx.req.session?.userId) {
             return {
+                success: false,
                 messages: ["User not logged in."],
             };
         }
@@ -22,9 +23,13 @@ export const meMutation = async (
             return user.user;
         }
         return {
+            success: false,
             messages: user.messages ? user.messages : [STANDARD_ERROR],
         };
     } catch (ex) {
-        throw ex;
+        return {
+            success: false,
+            messages: [STANDARD_ERROR]
+        }
     }
 }

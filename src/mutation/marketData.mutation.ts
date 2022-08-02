@@ -1,26 +1,21 @@
 import { GqlContext } from "../gql/GqlContext"
-import { EntityResult, STANDARD_ERROR } from "../common/commonValue";
+import { EntityResult, STANDARD_ERROR, USER_NOT_FOUND, USER_NOT_LOGIN } from "../common/commonValue";
 import { User } from "../model/user";
 import { createMarketData } from "../controller/marketData.controller";
+import { MarketData } from "../model/marketData";
 
 export const createMarketDataMutation = async (
     obj: any,
     args: {volatility: number, spot: number, interestRate: number},
     ctx: GqlContext,
     info: any
-): Promise<EntityResult> => {
+): Promise<EntityResult | MarketData> => {
     try {
-        if (!ctx.req.session || !ctx.req.session!.userId)
-            return {
-                messages: ["You must be logged in before you create market data."]
-            };
+        if (!ctx.req.session || !ctx.req.session!.userId) return USER_NOT_LOGIN;
 
         const user = await User.findOne(ctx.req.session.userId);
 
-        if (!user)
-            return {
-                messages: ["User Not Found"]
-            };
+        if (!user) return USER_NOT_FOUND;
 
         let result = await createMarketData(
             args.volatility,
@@ -29,10 +24,18 @@ export const createMarketDataMutation = async (
             user
         );
 
+        if (result.entity)
+            return result.entity;
+
         return {
+            success: false,
             messages: result.messages ? result.messages : [STANDARD_ERROR],
         };
     } catch (ex) {
-        throw ex;
+        return {
+            success: false,
+            messages: [STANDARD_ERROR]
+        }
+        
     }
 }

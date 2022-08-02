@@ -4,7 +4,6 @@ import { GqlContext } from "../gql/GqlContext";
 import { Instrument } from "../model/instrument";
 import { EntityResult, STANDARD_ERROR } from "../common/commonValue";
 
-
 export const queryGetInstrumentById = async (
     obj: any,
     args: { id: string },
@@ -15,15 +14,14 @@ export const queryGetInstrumentById = async (
     try {
         instrument = await getInstrumentById(args.id);
 
-        if (instrument.entity) {
-            return instrument.entity;
-        }
-        return {
-            messages: instrument.messages ? instrument.messages : [STANDARD_ERROR],
-        };
+        if (instrument.entity) return instrument.entity;
+
+        return { success: instrument.success, messages: instrument.messages ? instrument.messages : [STANDARD_ERROR] };
     } catch (ex: any) {
-        console.log(ex.message);
-        throw ex;
+        return {
+            success: false,
+            messages: [STANDARD_ERROR]
+        }
     }
 }
 
@@ -37,15 +35,17 @@ export const queryGetInstrumentByName = async (
     try {
         instrument = await getInstrumentByName(args.name);
 
-        if (instrument.entity) {
-            return instrument.entity;
-        }
+        if (instrument.entity) return instrument.entity;
+        
         return {
+            success: false,
             messages: instrument.messages ? instrument.messages : [STANDARD_ERROR],
         };
     } catch (ex: any) {
-        console.log(ex.message);
-        throw ex;
+        return {
+            success: false,
+            messages: [STANDARD_ERROR]
+        }
     }
 }
 
@@ -59,17 +59,16 @@ export const queryGetInstruments = async (
     try {
         instruments = await getInstruments();
 
-        if (instruments.entities) {
-            return {instruments: instruments.entities};
-        }
+        if (instruments.entities) return {instruments: instruments.entities};
+        
         return {
+            success: false,
             messages: instruments.messages ? instruments.messages : [STANDARD_ERROR],
         };
     } catch (ex: any) {
-        console.log(ex.message);
-        throw ex;
+        return {
+            success: false,
+            messages: [STANDARD_ERROR]
+        }
     }
 }
-
-
-

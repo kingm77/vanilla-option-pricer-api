@@ -19,10 +19,11 @@ export const createMarketData = async (
 
     if (!marketData)
         return {
+            success: false,
             messages: ["Failed to create Financial Definition."],
         };
 
     return {
-        messages: [marketData.id],
+        entity: marketData
     };
 }

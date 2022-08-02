@@ -4,6 +4,7 @@ const typeDefs = gql`
   scalar Date
 
   type EntityResult {
+    success: Boolean
     messages: [String!]
   }
 
@@ -92,13 +93,13 @@ const typeDefs = gql`
   }
 
   type Mutation {
-    createFinancialDefinition(instrumentName: String!, strike: Float!, maturity: String!, type: String!): EntityResult!
-    createMarketData(volatility: Float!, spot: Float!, interestRate: Float!): EntityResult!
-    register(email: String!, firstname: String!, lastname: String!, password: String!): String!
-    login(email: String!, password: String!): String!
-    logout(email: String!): String!
-    changePassword(newPassword: String!): String!
-    edit(newFirstname: String!, newLastname: String!): String!
+    createFinancialDefinition(instrumentName: String!, strike: Float!, maturity: String!, type: String!): FinancialDefinitionResult!
+    createMarketData(volatility: Float!, spot: Float!, interestRate: Float!): MarketDataResult!
+    register(email: String!, firstname: String!, lastname: String!, password: String!): EntityResult!
+    login(email: String!, password: String!): EntityResult!
+    logout(email: String!): EntityResult!
+    changePassword(newPassword: String!): EntityResult!
+    edit(newFirstname: String!, newLastname: String!): EntityResult!
     bookTrade(finDefId: ID!, marketDataId: ID!, quantity: Int!, price: Float!): EntityResult!
   }
 `;

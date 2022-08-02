@@ -1,3 +1,4 @@
+import { FAILED_CREATE_FIN_DEF, MATURITY_ERROR } from "../common/commonValue";
 import { checkMaturity } from "../common/validator/dateValidator";
 import { FinancialDefinition, OptionType } from "../model/financialDefinition";
 import { Instrument } from "../model/instrument";
@@ -12,10 +13,7 @@ export const createFinancialDefinition = async (
     maturity: Date,
     type: OptionType): Promise<QueryOneResult<FinancialDefinition>> => {
 
-    if (!checkMaturity(maturity))
-        return {
-            messages: ["Maturity must be greater or equal than the current date"]
-        }
+    if (!checkMaturity(maturity)) return MATURITY_ERROR;
 
     const financialDefinition = await FinancialDefinition.create({
         strike,
@@ -25,12 +23,9 @@ export const createFinancialDefinition = async (
         instrument
     }).save();
 
-    if (!financialDefinition)
-        return {
-            messages: ["Failed to create Financial Definition."],
-        };
+    if (!financialDefinition) return FAILED_CREATE_FIN_DEF;
 
     return {
-        messages: [financialDefinition.id],
+        entity: financialDefinition,
     };
 }

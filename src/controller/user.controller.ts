@@ -2,11 +2,12 @@ import { User } from "../model/user";
 import bcrypt from "bcryptjs";
 import { isPasswordValid } from "../common/validator/passwordValidator";
 import { isEmailValid } from "../common/validator/emailValidator";
+import { EntityResult, USER_NOT_CONFIRMED, USER_NOT_FOUND } from "../common/commonValue";
 
-const saltRounds = 10;
+const saltRounds = Number(process.env.SALT_ROUND);
 
 export class UserResult {
-  constructor(public messages?: Array<string>, public user?: User) {}
+    constructor(public messages?: Array<string>, public user?: User, public success?: boolean) {}
 }
 
 export const register = async (
@@ -17,18 +18,20 @@ export const register = async (
 ): Promise<UserResult> => {
   const result = isPasswordValid(password);
   if (!result.isValid) {
-    return {
-      messages: [
-        "Passwords must have min length 8, 1 upper character, 1 number, and 1 symbol",
-      ],
+      return {
+          success: false,
+          messages: [
+            "Passwords must have min length 8, 1 upper character, 1 number, and 1 symbol",
+          ],
     };
   }
 
   const trimmedEmail = email.trim().toLowerCase();
   const emailErrorMsg = isEmailValid(trimmedEmail);
   if (emailErrorMsg) {
-    return {
-      messages: [emailErrorMsg],
+      return {
+          success: false,
+          messages: [emailErrorMsg],
     };
   }
 
@@ -55,22 +58,21 @@ export const login = async (
   const user = await User.findOne({
     where: { email },
   });
+
   if (!user) {
-    return {
-      messages: [userNotFound(email)],
+      return {
+          success: false,
+          messages: [userNotFound(email)],
     };
   }
 
-  if (!user.confirmed) {
-    return {
-      messages: ["User has not confirmed their registration email yet."],
-    };
-  }
-
+  if (!user.confirmed) return USER_NOT_CONFIRMED
+ 
   const passwordMatch = await bcrypt.compare(password, user?.password);
   if (!passwordMatch) {
-    return {
-      messages: ["Password is invalid."],
+      return {
+          success: false,
+          messages: ["Password is invalid."],
     };
   }
 
@@ -79,34 +81,40 @@ export const login = async (
   };
 };
 
-export const logout = async (email: string): Promise<string> => {
+export const logout = async (email: string): Promise<EntityResult> => {
   const user = await User.findOne({
     where: { email },
   });
 
-  if (!user) {
-    return userNotFound(email);
-  }
+    if (!user) 
+        return {
+            success: false,
+            messages: [userNotFound(email)]
+        };
 
-  return "User logged off.";
+    return {
+        success: true,
+        messages: ["User logged off."]
+    };
 };
 
-export const changePassword = async (id: string, newPassword: string): Promise<string> => {
+export const changePassword = async (id: string, newPassword: string): Promise<EntityResult>=> {
     const result = isPasswordValid(newPassword);
     if (!result.isValid) {
-        return "Passwords must have min length 8, 1 upper character, 1 number, and 1 symbol"
+        return {
+            success: false,
+            messages: ["Passwords must have min length 8, 1 upper character, 1 number, and 1 symbol"]
+        }
     }
 
     const user = await User.findOne({
         where: { id },
     });
 
-    if (!user) {
-        return "User not found.";
-    }
+    if (!user) return USER_NOT_FOUND
 
     if (!user.confirmed) {
-        return "User has not confirmed their registration email yet.";
+        return USER_NOT_CONFIRMED
     }
 
     const salt = await bcrypt.genSalt(saltRounds);
@@ -114,21 +122,21 @@ export const changePassword = async (id: string, newPassword: string): Promise<s
     user.password = hashedPassword;
     user.save();
 
-    return "Password changed succesfully"
+    return {
+        success: true,
+        messages: ["Password changed succesfully"]
+    };
+    
 }
 
-export const edit = async (id: string, newFirstname: string, newLastname: string): Promise<string> => {
+export const edit = async (id: string, newFirstname: string, newLastname: string): Promise<EntityResult> => {
     const user = await User.findOne({
         where: { id },
     });
 
-    if (!user) {
-        return "User not found.";
-    }
+    if (!user) return USER_NOT_FOUND
 
-    if (!user.confirmed) {
-        return "User has not confirmed their registration email yet.";
-    }
+    if (!user.confirmed) USER_NOT_CONFIRMED
 
     if (newFirstname != "" && user?.firstname != newFirstname)
         user.firstname = newFirstname;
@@ -137,7 +145,10 @@ export const edit = async (id: string, newFirstname: string, newLastname: string
         user.lastname = newLastname;
 
     user.save();
-    return "user edited succesfully";
+    return {
+        success: true,
+        messages: ["User edited successfully"]
+    };
 }
 
 export const me = async (id: string): Promise<UserResult> => {
@@ -150,17 +161,9 @@ export const me = async (id: string): Promise<UserResult> => {
         ],
     });
 
-    if (!user) {
-        return {
-            messages: ["User not found."],
-        };
-    }
+    if (!user) return USER_NOT_FOUND;
 
-    if (!user.confirmed) {
-        return {
-            messages: ["User has not confirmed their registration email yet."],
-        };
-    }
+    if (!user.confirmed) return USER_NOT_CONFIRMED;
 
     user.password = "";
     return {

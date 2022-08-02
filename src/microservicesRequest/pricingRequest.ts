@@ -7,14 +7,6 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-export class Price {
-    value: number
-}
-
-export class PriceResult {
-    constructor(public messages?: Array<string>, public price?: Price) { }
-}
-
 export const getPrice =
     async (
         findef: FinancialDefinition,
@@ -31,7 +23,6 @@ export const getPrice =
                 };
 
             const json = await res.json();
-
             return {
                 entity: transform(json) * quantity
             }
@@ -41,7 +32,6 @@ export const getPrice =
                 messages: ["pricing error"]
             };
         }
-        
 }
 
 

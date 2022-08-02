@@ -27,6 +27,7 @@ export const createTrade = async (
 
     if (!trade)
         return {
+            success: false,
             messages: ["Failed to create Trade."],
         };
 
