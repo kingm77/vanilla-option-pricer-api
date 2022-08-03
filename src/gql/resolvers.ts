@@ -4,7 +4,7 @@ import { createfinDefMutation } from "../mutation/financialDefinition.mutation";
 import { createMarketDataMutation } from "../mutation/marketData.mutation";
 import { changePasswordMutation, editMutation, loginMutation, logoutMutation, registerMutation } from "../mutation/user.mutation";
 import { queryGetInstrumentById, queryGetInstrumentByName, queryGetInstruments } from "../query/instrument.query";
-import { meMutation } from "../query/user.query";
+import { meQuery } from "../query/user.query";
 import { GqlContext } from "./GqlContext";
 import { bookTradeMutation } from "../mutation/trade.mutation";
 
@@ -94,7 +94,7 @@ const resolvers: IResolvers = {
         getInstrumentById: queryGetInstrumentById,
         getInstrumentByName:queryGetInstrumentByName,
         getInstruments: queryGetInstruments,
-        me: meMutation,
+        me: meQuery,
         getTradePrice: getPriceQuery
     },
     Mutation: {

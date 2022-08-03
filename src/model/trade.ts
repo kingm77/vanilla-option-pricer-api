@@ -28,14 +28,6 @@ export class Trade extends BaseEntity{
     })
     price: number;
 
-    @Column("varchar", {
-        name: "Code",
-        length: 120,
-        unique: true,
-        nullable: false,
-    })
-    code: string;
-
     @ManyToOne(
         () => User,
         (user: User) => user.trades

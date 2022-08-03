@@ -4,12 +4,11 @@ import { User } from "../model/user";
 import { FinancialDefinition } from "../model/financialDefinition";
 import { MarketData } from "../model/marketData";
 import { createTrade } from "../controller/trade.controller";
-import { v4 } from "uuid";
 
 export const bookTradeMutation = async (
     obj: any,
     args: {
-        findDefId: number,
+        finDefId: number,
         marketDataId: number,
         quantity: number,
         price: number
@@ -26,7 +25,10 @@ export const bookTradeMutation = async (
 
         if (!user) return USER_NOT_FOUND;
 
-        const findef = await FinancialDefinition.findOne(args.findDefId);
+        console.log(args.finDefId);
+        const findef = await FinancialDefinition.findOne(args.finDefId);
+        console.log(findef);
+        
 
         if (!findef) return FIN_DEF_NOT_FOUND;
 
@@ -39,12 +41,11 @@ export const bookTradeMutation = async (
             findef,
             marketData,
             args.quantity,
-            args.price,
-            v4()
+            args.price
         );
 
         return {
-            success: false,
+            success: result.success,
             messages: result.messages ? result.messages : [STANDARD_ERROR],
         };
     } catch (ex) {

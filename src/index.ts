@@ -44,9 +44,9 @@ const main = async () => {
       resave: false,
       saveUninitialized: false,
       cookie: {
-        httpOnly: true,
+        httpOnly: false,
         secure: false,
-        maxAge: 1000 * 60 * 60 * 24,
+        maxAge: 3600000,
       },
     } as any)
   );

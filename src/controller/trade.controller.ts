@@ -10,15 +10,13 @@ export const createTrade = async (
     finDef: FinancialDefinition,
     marketData: MarketData,
     quantity: number,
-    price: number,
-    code: string): Promise<QueryOneResult<Trade>> => {
+    price: number): Promise<QueryOneResult<Trade>> => {
 
     const date = new Date().toISOString().substr(0, 10);
     const trad = {
         quantity,
         price,
         date,
-        code,
         user,
         financialDef: finDef,
         marketData
@@ -32,6 +30,7 @@ export const createTrade = async (
         };
 
     return {
-        messages: [trade.code],
+        success: true,
+        messages: [trade.id],
     };
 }

@@ -4,7 +4,7 @@ import { EntityResult, STANDARD_ERROR } from "../common/commonValue";
 import { me, UserResult } from "../controller/user.controller";
 
 
-export const meMutation = async (
+export const meQuery = async (
     obj: any,
     args: null,
     ctx: GqlContext,
@@ -18,7 +18,10 @@ export const meMutation = async (
                 messages: ["User not logged in."],
             };
         }
+        console.log(ctx.req.session.userId);
+
         user = await me(ctx.req.session.userId);
+
         if (user && user.user) {
             return user.user;
         }

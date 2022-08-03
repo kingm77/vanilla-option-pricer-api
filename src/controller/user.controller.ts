@@ -152,14 +152,20 @@ export const edit = async (id: string, newFirstname: string, newLastname: string
 }
 
 export const me = async (id: string): Promise<UserResult> => {
+    console.log("me controller");
+
     const user = await User.findOne({
         where: { id },
         relations: [
-            "financialsDefs",
-            "marketsData",
-            'trades'
+            'trades',
+            "trades.user",
+            'trades.financialDef',
+            'trades.financialDef.instrument',
+            'trades.marketData'
         ],
     });
+
+    console.log(user);
 
     if (!user) return USER_NOT_FOUND;
 
